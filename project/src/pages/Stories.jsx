@@ -66,7 +66,7 @@ export default function Stories() {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-r from-green-200 via-green-300 to-green-500">
+    <div className="min-h-screen flex flex-col bg-gradient-to-r from-white-200 via-white-300 to-white-500">
       <div className="flex-grow">
         <div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-xl mt-10">
           <h2 className="text-3xl font-bold text-center text-green-700 mb-8">Post a Story</h2>

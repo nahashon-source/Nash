@@ -92,12 +92,12 @@ const ManageBeneficiariesPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-green-200 via-green-300 to-green-500 py-10 px-6">
+    <div className="min-h-screen bg-gradient-to-r from-white-200 via-white-300 to-white-500 py-10 px-6">
       <div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-xl">
         <h2 className="text-3xl font-bold text-center text-green-700 mb-8">Manage Beneficiaries and Inventory</h2>
 
         {error && <p className="text-center text-red-600 font-semibold">{error}</p>} {/* Display errors */}
-        
+
         <h3 className="text-2xl font-semibold text-green-600 mb-4">Add Beneficiary</h3>
         <form onSubmit={handleBeneficiarySubmit} className="space-y-6">
           <div>
@@ -168,7 +168,8 @@ const ManageBeneficiariesPage = () => {
           </button>
         </form>
       </div>
-      <footer className="bg-white py-6 mt-12 border-t border-gray-200">
+
+      <footer className="bg-white py-8 mt-12 border-t border-gray-200 w-full">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-black">
           <p className="text-lg">&copy; 2024 EcoGuard. All rights reserved.</p>
           <p className="mt-2 text-sm">Your support helps protect the planet for future generations.</p>
@@ -189,6 +190,7 @@ const ManageBeneficiariesPage = () => {
           </div>
         </div>
       </footer>
+
     </div>
   );
 };
