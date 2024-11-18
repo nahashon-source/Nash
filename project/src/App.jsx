@@ -1,3 +1,4 @@
+// App.js
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
@@ -6,6 +7,8 @@ import Organizations from './pages/Organizations';
 import Stories from './pages/Stories';
 import About from './pages/About';
 import Donate from './pages/Donate';
+import ManageBeneficiariesPage from './pages/ManageBeneficiariesPage';
+
 
 function App() {
   return (
@@ -18,6 +21,7 @@ function App() {
           <Route path="/stories" element={<Stories />} />
           <Route path="/about" element={<About />} />
           <Route path="/donate" element={<Donate />} />
+          <Route path="/beneficiary-list" element={<ManageBeneficiariesPage/>} />
         </Routes>
       </div>
     </Router>

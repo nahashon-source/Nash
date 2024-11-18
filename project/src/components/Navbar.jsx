@@ -27,13 +27,8 @@ export default function Navbar() {
               <Link to="/" className="text-green-800 hover:text-green-600 px-3 py-2 rounded-md font-medium">Home</Link>
               <Link to="/organizations" className="text-green-800 hover:text-green-600 px-3 py-2 rounded-md font-medium">Organizations</Link>
               <Link to="/stories" className="text-green-800 hover:text-green-600 px-3 py-2 rounded-md font-medium">Stories</Link>
+              <Link to="/beneficiary-list" className="text-green-800 hover:text-green-600 px-3 py-2 rounded-md font-medium">Beneficiaries & inventories</Link>
               <Link to="/about" className="text-green-800 hover:text-green-600 px-3 py-2 rounded-md font-medium">About</Link>
-              <button 
-                onClick={handleDonateClick}
-                className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 flex items-center gap-2"
-              >
-                Sign out
-              </button>
             </div>
           </div>
           <div className="md:hidden">
