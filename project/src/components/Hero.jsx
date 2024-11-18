@@ -14,14 +14,6 @@ export default function Hero() {
               Join us in preserving Earth's precious ecosystems. Your regular donations help environmental organizations make a lasting impact on our planet's future.
             </p>
             <div className="flex flex-wrap gap-4">
-              <button className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 flex items-center gap-2">
-                <Heart size={20} />
-                Start Donating
-              </button>
-              <button className="border-2 border-green-600 text-green-600 px-6 py-3 rounded-lg hover:bg-green-50 flex items-center gap-2">
-                Learn More
-                <ArrowRight size={20} />
-              </button>
             </div>
           </div>
           <div className="relative">
