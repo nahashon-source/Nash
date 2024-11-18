@@ -1,38 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import { useFormik } from 'formik';
 import { FaWhatsapp, FaFacebook, FaInstagram, FaTwitter } from 'react-icons/fa';
-import axios from 'axios';
-
-const stories = [
-  {
-    id: 1,
-    title: "Restoring the Amazon Rainforest",
-    content: "Through community efforts and sustainable practices, we've helped restore over 1,000 hectares of rainforest...",
-    image: "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-    organization: "Rainforest Alliance",
-    date: "2024-03-01"
-  },
-  {
-    id: 2,
-    title: "Marine Life Conservation Success",
-    content: "Our recent initiative has successfully protected endangered sea turtles and their nesting sites...",
-    image: "https://images.unsplash.com/photo-1583212292454-1fe6229603b7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-    organization: "Ocean Conservation Initiative",
-    date: "2024-02-28"
-  },
-  {
-    id: 3,
-    title: "Wildlife Protection Achievement",
-    content: "Thanks to donor support, we've established a new sanctuary for endangered species...",
-    image: "https://images.unsplash.com/photo-1564760055775-d63b17a55c44?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-    organization: "Wildlife Protection Fund",
-    date: "2024-02-25"
-  }
-];
 
 export default function Stories() {
+  const [stories, setStories] = useState([
+    {
+      id: 1,
+      title: "Restoring the Amazon Rainforest",
+      content: "Through community efforts and sustainable practices, we've helped restore over 1,000 hectares of rainforest...",
+      image: "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+      organization: "Rainforest Alliance",
+      date: "2024-03-01"
+    },
+    {
+      id: 2,
+      title: "Marine Life Conservation Success",
+      content: "Our recent initiative has successfully protected endangered sea turtles and their nesting sites...",
+      image: "https://images.unsplash.com/photo-1583212292454-1fe6229603b7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+      organization: "Ocean Conservation Initiative",
+      date: "2024-02-28"
+    },
+    {
+      id: 3,
+      title: "Wildlife Protection Achievement",
+      content: "Thanks to donor support, we've established a new sanctuary for endangered species...",
+      image: "https://images.unsplash.com/photo-1564760055775-d63b17a55c44?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+      organization: "Wildlife Protection Fund",
+      date: "2024-02-25"
+    }
+  ]);
+
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [date, setDate] = useState(new Date()); // Automatically updating date
+  const [date, setDate] = useState(new Date());
 
   const formik = useFormik({
     initialValues: {
@@ -43,7 +42,13 @@ export default function Stories() {
       date: date.toISOString()
     },
     onSubmit: (values) => {
-      console.log('Form data:', values);
+      const newStory = {
+        ...values,
+        id: stories.length + 1,
+        date: date.toISOString()
+      };
+      setStories((prevStories) => [...prevStories, newStory]);
+      formik.resetForm();
     }
   });
 
