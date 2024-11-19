@@ -10,8 +10,13 @@ export default function LoginForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Mock authentication logic
-    if (email === 'test@example.com' && password === 'password') {
+    // Retrieve users from localStorage
+    const users = JSON.parse(localStorage.getItem('users')) || [];
+    const userExists = users.find(
+      (user) => user.email === email && user.password === password
+    );
+
+    if (userExists) {
       // Set the user as logged in in localStorage
       localStorage.setItem('isLoggedIn', 'true');
       navigate('/'); // Redirect to the home page on successful login
