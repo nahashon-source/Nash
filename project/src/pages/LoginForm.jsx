@@ -12,17 +12,22 @@ export default function LoginForm() {
 
     // Retrieve users from localStorage
     const users = JSON.parse(localStorage.getItem('users')) || [];
-    const userExists = users.find(
-      (user) => user.email === email && user.password === password
-    );
+    const user = users.find((user) => user.email === email);
 
-    if (userExists) {
+    if (!user) {
+      setError('Email not found. Please sign up.');
+    } else if (user.password !== password) {
+      setError('Incorrect password. Please try again.');
+    } else {
       // Set the user as logged in in localStorage
       localStorage.setItem('isLoggedIn', 'true');
       navigate('/'); // Redirect to the home page on successful login
-    } else {
-      setError('Invalid email or password');
     }
+  };
+
+  const handleInputChange = (setter) => (e) => {
+    setter(e.target.value);
+    if (error) setError(''); // Clear error when user starts typing
   };
 
   return (
@@ -36,7 +41,7 @@ export default function LoginForm() {
       <div className="w-full max-w-md p-8 space-y-6 bg-white bg-opacity-90 rounded shadow-md">
         <h2 className="text-2xl font-bold text-center text-green-800">Sign In</h2>
         {error && (
-          <div className="text-sm text-red-600 text-center">
+          <div className="text-sm text-red-600 text-center" role="alert">
             {error}
           </div>
         )}
@@ -52,7 +57,7 @@ export default function LoginForm() {
               type="email"
               id="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={handleInputChange(setEmail)}
               required
               className="block w-full px-3 py-2 mt-1 text-gray-900 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-gray-400"
             />
@@ -68,7 +73,7 @@ export default function LoginForm() {
               type="password"
               id="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={handleInputChange(setPassword)}
               required
               className="block w-full px-3 py-2 mt-1 text-gray-900 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-gray-400"
             />
