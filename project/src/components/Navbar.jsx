@@ -1,13 +1,22 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Menu, X, TreePine, Heart } from 'lucide-react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Menu, X, TreePine } from 'lucide-react';
 
-export default function Navbar() {
+export default function Navbar({ isLoggedIn }) {
   const [isOpen, setIsOpen] = React.useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const handleDonateClick = () => {
-    navigate('/donate');
+  // Do not display Navbar on Login or Sign Up pages
+  if (location.pathname === '/login' || location.pathname === '/signup') {
+    return null;
+  }
+
+  const handleSignOut = () => {
+    // Remove the user session from localStorage
+    localStorage.removeItem('isLoggedIn');
+    // Redirect to the login page
+    navigate('/login');
   };
 
   return (
@@ -29,6 +38,12 @@ export default function Navbar() {
               <Link to="/stories" className="text-green-800 hover:text-green-600 px-3 py-2 rounded-md font-medium">Stories</Link>
               <Link to="/beneficiary-list" className="text-green-800 hover:text-green-600 px-3 py-2 rounded-md font-medium">Beneficiaries & inventories</Link>
               <Link to="/about" className="text-green-800 hover:text-green-600 px-3 py-2 rounded-md font-medium">About</Link>
+              <button
+                onClick={handleSignOut}
+                className="group relative flex justify-center py-1 px-2 border border-transparent text-xs font-medium rounded text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+              >
+                Sign Out
+              </button>
             </div>
           </div>
           <div className="md:hidden">
@@ -49,12 +64,11 @@ export default function Navbar() {
             <Link to="/organizations" className="text-green-800 hover:text-green-600 block px-3 py-2 rounded-md font-medium">Organizations</Link>
             <Link to="/stories" className="text-green-800 hover:text-green-600 block px-3 py-2 rounded-md font-medium">Stories</Link>
             <Link to="/about" className="text-green-800 hover:text-green-600 block px-3 py-2 rounded-md font-medium">About</Link>
-            <button 
-              onClick={handleDonateClick}
+            <button
+              onClick={handleSignOut}
               className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 w-full flex items-center justify-center gap-2"
             >
-              <Heart size={18} />
-              Donate Now
+              Sign Out
             </button>
           </div>
         </div>
