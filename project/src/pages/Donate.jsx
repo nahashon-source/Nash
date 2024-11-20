@@ -9,7 +9,6 @@ export default function Donate() {
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('');
   const [currency, setCurrency] = useState('Ksh');
-  const [mpesaPhoneNumber, setMpesaPhoneNumber] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -21,11 +20,6 @@ export default function Donate() {
       isAnonymous,
       paymentMethod,
     });
-
-    // For MPESA payment, handle it here if MPESA is selected
-    if (paymentMethod === 'mpesa') {
-      handleMpesaPayment();
-    }
   };
 
   const currencySymbols = {
@@ -41,31 +35,6 @@ export default function Donate() {
 
   const handleFrequencyClick = (newFrequency) => {
     setFrequency(newFrequency);
-  };
-
-  const handleMpesaPayment = async () => {
-    try {
-      const response = await fetch("http://localhost:3000/mpesa/stkpush", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          phone: mpesaPhoneNumber, // The number input by the user
-          amount: donationAmount, // Donation amount
-        }),
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-        alert("Payment prompt sent to your MPESA. Please complete the payment.");
-      } else {
-        alert(`Error: ${data.message}`);
-      }
-    } catch (error) {
-      alert("Failed to initiate payment. Please try again.");
-      console.error(error);
-    }
   };
 
   return (
@@ -181,37 +150,74 @@ export default function Donate() {
             </div>
 
             {/* Payment Information */}
-            <div className="mb-6">
-              <label htmlFor="paymentMethod" className="block text-sm font-semibold text-gray-700">Payment Method</label>
-              <select
-                id="paymentMethod"
-                value={paymentMethod}
-                onChange={(e) => setPaymentMethod(e.target.value)}
-                className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-green-500 focus:border-green-500"
-              >
-                <option value="">Select Payment Method</option>
-                <option value="creditCard">Credit Card</option>
-                <option value="debitCard">Debit Card</option>
-                <option value="mpesa">MPESA</option>
-                <option value="paypal">PayPal</option>
-              </select>
-            </div>
+<div className="mb-6">
+  <label htmlFor="paymentMethod" className="block text-sm font-semibold text-gray-700">Payment Method</label>
+  <select
+    id="paymentMethod"
+    value={paymentMethod}
+    onChange={(e) => setPaymentMethod(e.target.value)}
+    className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-green-500 focus:border-green-500"
+  >
+    <option value="">Select Payment Method</option>
+    <option value="creditCard">Credit Card</option>
+    <option value="debitCard">Debit Card</option>
+    <option value="mpesa">MPESA</option>
+    <option value="paypal">PayPal</option>
+  </select>
+</div>
 
-            {/* Payment Form Based on Selected Method */}
-            {paymentMethod === 'mpesa' && (
-              <div className="mb-6">
-                <label className="block text-gray-700 text-sm font-semibold mb-2">MPESA Phone Number</label>
-                <input
-                  type="text"
-                  placeholder="Enter your MPESA phone number"
-                  value={mpesaPhoneNumber}
-                  onChange={(e) => setMpesaPhoneNumber(e.target.value)}
-                  className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-green-500"
-                  required
-                />
-              </div>
-            )}
-
+{/* Payment Form Based on Selected Method */}
+{paymentMethod === 'creditCard' || paymentMethod === 'debitCard' ? (
+  <div className="mb-6">
+    <label className="block text-gray-700 text-sm font-semibold mb-2">Card Information</label>
+    <div className="mb-4">
+      <input
+        type="text"
+        placeholder="Card Number"
+        className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-green-500"
+        required
+      />
+    </div>
+    <div className="flex space-x-4">
+      <div className="w-1/2">
+        <input
+          type="text"
+          placeholder="Expiry Date (MM/YY)"
+          className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-green-500"
+          required
+        />
+      </div>
+      <div className="w-1/2">
+        <input
+          type="text"
+          placeholder="CVV"
+          className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-green-500"
+          required
+        />
+      </div>
+    </div>
+  </div>
+) : paymentMethod === 'mpesa' ? (
+  <div className="mb-6">
+    <label className="block text-gray-700 text-sm font-semibold mb-2">MPESA Phone Number</label>
+    <input
+      type="text"
+      placeholder="Enter your MPESA phone number"
+      className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-green-500"
+      required
+    />
+  </div>
+) : paymentMethod === 'paypal' ? (
+  <div className="mb-6">
+    <label className="block text-gray-700 text-sm font-semibold mb-2">PayPal Email</label>
+    <input
+      type="email"
+      placeholder="Enter your PayPal email"
+      className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-green-500"
+      required
+    />
+  </div>
+) : null}
             {/* Donation Summary */}
             <div className="mt-8 border-t pt-4">
               <div className="flex justify-between mb-2">
@@ -237,7 +243,6 @@ export default function Donate() {
           </form>
         </div>
       </div>
-
       <footer className="bg-white py-6 mt-12 border-t border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-black">
           <p className="text-lg">&copy; 2024 Mazingira. All rights reserved.</p>
