@@ -9,9 +9,17 @@ export default function Donate() {
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('');
   const [currency, setCurrency] = useState('Ksh');
+  const [buttonText, setButtonText] = useState('Complete Donation');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Simulate button processing state
+    setButtonText('Processing...');
+    await new Promise((resolve) => setTimeout(resolve, 2000)); // 0.02 seconds
+    setButtonText('Accepted Transaction');
+
+    // Log donation details
     console.log({
       amount: donationAmount,
       currency,
@@ -31,10 +39,6 @@ export default function Donate() {
 
   const getCurrencySymbol = (currencyCode) => {
     return currencySymbols[currencyCode] || currencyCode;
-  };
-
-  const handleFrequencyClick = (newFrequency) => {
-    setFrequency(newFrequency);
   };
 
   return (
@@ -150,116 +154,118 @@ export default function Donate() {
             </div>
 
             {/* Payment Information */}
-<div className="mb-6">
-  <label htmlFor="paymentMethod" className="block text-sm font-semibold text-gray-700">Payment Method</label>
-  <select
-    id="paymentMethod"
-    value={paymentMethod}
-    onChange={(e) => setPaymentMethod(e.target.value)}
-    className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-green-500 focus:border-green-500"
-  >
-    <option value="">Select Payment Method</option>
-    <option value="creditCard">Credit Card</option>
-    <option value="debitCard">Debit Card</option>
-    <option value="mpesa">MPESA</option>
-    <option value="paypal">PayPal</option>
-  </select>
-</div>
+            <div className="mb-6">
+              <label htmlFor="paymentMethod" className="block text-sm font-semibold text-gray-700">Payment Method</label>
+              <select
+                id="paymentMethod"
+                value={paymentMethod}
+                onChange={(e) => setPaymentMethod(e.target.value)}
+                className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-green-500 focus:border-green-500"
+              >
+                <option value="">Select Payment Method</option>
+                <option value="creditCard">Credit Card</option>
+                <option value="debitCard">Debit Card</option>
+                <option value="mpesa">MPESA</option>
+                <option value="paypal">PayPal</option>
+              </select>
+            </div>
 
-{/* Payment Form Based on Selected Method */}
-{paymentMethod === 'creditCard' || paymentMethod === 'debitCard' ? (
-  <div className="mb-6">
-    <label className="block text-gray-700 text-sm font-semibold mb-2">Card Information</label>
-    <div className="mb-4">
-      <input
-        type="text"
-        placeholder="Card Number"
-        className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-green-500"
-        required
-      />
-    </div>
-    <div className="flex space-x-4">
-      <div className="w-1/2">
-        <input
-          type="text"
-          placeholder="Expiry Date (MM/YY)"
-          className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-green-500"
-          required
-        />
-      </div>
-      <div className="w-1/2">
-        <input
-          type="text"
-          placeholder="CVV"
-          className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-green-500"
-          required
-        />
-      </div>
-    </div>
-  </div>
-) : paymentMethod === 'mpesa' ? (
-  <div className="mb-6">
-    <label className="block text-gray-700 text-sm font-semibold mb-2">MPESA Phone Number</label>
-    <input
-      type="text"
-      placeholder="Enter your MPESA phone number"
-      className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-green-500"
-      required
-    />
-  </div>
-) : paymentMethod === 'paypal' ? (
-  <div className="mb-6">
-    <label className="block text-gray-700 text-sm font-semibold mb-2">PayPal Email</label>
-    <input
-      type="email"
-      placeholder="Enter your PayPal email"
-      className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-green-500"
-      required
-    />
-  </div>
-) : null}
+            {/* Payment Form Based on Selected Method */}
+            {paymentMethod === 'creditCard' || paymentMethod === 'debitCard' ? (
+              <div className="mb-6">
+                <label className="block text-gray-700 text-sm font-semibold mb-2">Card Information</label>
+                <input
+                  type="text"
+                  placeholder="Card Number"
+                  className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-green-500"
+                  required
+                />
+                <div className="flex space-x-4 mt-4">
+                  <input
+                    type="text"
+                    placeholder="Expiry Date (MM/YY)"
+                    className="w-1/2 px-4 py-3 border rounded-lg focus:outline-none focus:border-green-500"
+                    required
+                  />
+                  <input
+                    type="text"
+                    placeholder="CVV"
+                    className="w-1/2 px-4 py-3 border rounded-lg focus:outline-none focus:border-green-500"
+                    required
+                  />
+                </div>
+              </div>
+            ) : paymentMethod === 'mpesa' ? (
+              <div className="mb-6">
+                <label className="block text-gray-700 text-sm font-semibold mb-2">MPESA Phone Number</label>
+                <input
+                  type="text"
+                  placeholder="Enter your MPESA phone number"
+                  className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-green-500"
+                  required
+                />
+              </div>
+            ) : paymentMethod === 'paypal' ? (
+              <div className="mb-6">
+                <label className="block text-gray-700 text-sm font-semibold mb-2">PayPal Email</label>
+                <input
+                  type="email"
+                  placeholder="Enter your PayPal email"
+                  className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-green-500"
+                  required
+                />
+              </div>
+            ) : null}
+
             {/* Donation Summary */}
             <div className="mt-8 border-t pt-4">
-              <div className="flex justify-between mb-2">
-                <span>Frequency</span>
-                <span className="capitalize">{frequency}</span>
-              </div>
-              <div className="flex justify-between font-semibold">
-                <span>Total</span>
-                <span>
-                  {getCurrencySymbol(currency)} {donationAmount} / {frequency === 'monthly' ? 'month' : frequency}
-                </span>
-              </div>
+              <h3 className="text-lg font-semibold text-gray-700">Summary</h3>
+              <p className="mt-2 text-sm text-gray-600">
+                Donation Amount: {getCurrencySymbol(currency)} {donationAmount}
+              </p>
+              {isRecurring && (
+                <p className="mt-2 text-sm text-gray-600">Recurring: {frequency.charAt(0).toUpperCase() + frequency.slice(1)}</p>
+              )}
+              <p className="mt-2 text-sm text-gray-600">
+                Anonymous Donation: {isAnonymous ? 'Yes' : 'No'}
+              </p>
+              <p className="mt-2 text-sm text-gray-600">
+                Payment Method: {paymentMethod ? paymentMethod.charAt(0).toUpperCase() + paymentMethod.slice(1) : 'None'}
+              </p>
             </div>
 
             {/* Submit Button */}
-            <button
-              type="submit"
-              className="w-full bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 flex items-center justify-center gap-2 mt-6"
-            >
-              <Heart size={20} />
-              Complete Donation
-            </button>
+            <div className="mt-6">
+              <button
+                type="submit"
+                className="w-full bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition duration-200 font-semibold"
+              >
+                {buttonText}
+              </button>
+            </div>
           </form>
         </div>
       </div>
+
+      {/* Social Sharing Section */}
       <footer className="bg-white py-6 mt-12 border-t border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-black">
-          <p className="text-lg">&copy; 2024 Mazingira. All rights reserved.</p>
+          {/* Dynamic Year Handling */}
+          <p className="text-lg">&copy; {new Date().getFullYear()} Mazingira. All rights reserved.</p>
           <p className="mt-2 text-sm">Your support helps protect the planet for future generations.</p>
 
+          {/* Social Media Links */}
           <div className="flex justify-center mt-4 space-x-6">
-            {/* Social Media Icons */}
-            <a href="https://wa.me/" target="_blank" rel="noopener noreferrer">
+            <a href="https://wa.me/" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
               <FaWhatsapp size={30} className="text-green-600 hover:text-green-800" />
             </a>
-            <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer">
+            <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
               <FaFacebook size={30} className="text-blue-600 hover:text-blue-800" />
             </a>
-            <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer">
+            <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
               <FaInstagram size={30} className="text-pink-600 hover:text-pink-800" />
             </a>
-            <a href="https://twitter.com/" target="_blank" rel="noopener noreferrer">
+            <a href="https://twitter.com/" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
               <FaTwitter size={30} className="text-blue-400 hover:text-blue-600" />
             </a>
           </div>
