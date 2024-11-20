@@ -59,6 +59,7 @@ export default function Organizations() {
     name: '',
     description: '',
     raised: '',
+    image: '', // Added the image field
   });
 
   const [orgList, setOrgList] = useState(organizations);
@@ -71,24 +72,31 @@ export default function Organizations() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!newOrg.name || !newOrg.description || !newOrg.raised) {
+    if (!newOrg.name || !newOrg.description || !newOrg.raised || !newOrg.image) {
       alert('All fields are required');
       return;
     }
     const newOrganization = {
       ...newOrg,
       id: orgList.length + 1,
-      image: 'https://via.placeholder.com/150',
-      status: 'Pending', // Default status for new organizations
+      status: 'Pending', // New organizations start as 'Pending'
     };
     setOrgList((prev) => [...prev, newOrganization]);
-    setNewOrg({ name: '', description: '', raised: '' });
+    setNewOrg({ name: '', description: '', raised: '', image: '' }); // Clear form after submit
   };
 
   const filteredOrganizations =
     filterStatus === 'All'
       ? orgList
       : orgList.filter((org) => org.status === filterStatus);
+
+  const updateOrganizationStatus = (id, newStatus) => {
+    setOrgList((prev) =>
+      prev.map((org) =>
+        org.id === id ? { ...org, status: newStatus } : org
+      )
+    );
+  };
 
   return (
     <div className="pt-16">
@@ -180,6 +188,23 @@ export default function Organizations() {
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm"
             />
           </div>
+          <div>
+            <label
+              htmlFor="image"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Image URL
+            </label>
+            <input
+              type="url"
+              id="image"
+              name="image"
+              value={newOrg.image}
+              onChange={handleInputChange}
+              required
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm"
+            />
+          </div>
           <button
             type="submit"
             className="w-full py-2 px-4 bg-green-600 text-white rounded-md hover:bg-green-700"
@@ -193,46 +218,33 @@ export default function Organizations() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredOrganizations.map((org) => (
-            <OrganizationCard key={org.id} org={org} />
+            <OrganizationCard 
+              key={org.id} 
+              org={org} 
+              onStatusChange={updateOrganizationStatus}
+            />
           ))}
         </div>
       </div>
 
-      {/* Footer */}
       <footer className="bg-white py-6 mt-12 border-t border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-black">
-          <p className="text-lg">&copy; 2024 Mazingira. All rights reserved.</p>
-          <p className="mt-2 text-sm">
-            Your support helps protect the planet for future generations.
-          </p>
+          {/* Dynamic Year Handling */}
+          <p className="text-lg">&copy; {new Date().getFullYear()} Mazingira. All rights reserved.</p>
+          <p className="mt-2 text-sm">Your support helps protect the planet for future generations.</p>
 
+          {/* Social Media Links */}
           <div className="flex justify-center mt-4 space-x-6">
-            <a
-              href="https://wa.me/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <a href="https://wa.me/" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
               <FaWhatsapp size={30} className="text-green-600 hover:text-green-800" />
             </a>
-            <a
-              href="https://www.facebook.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
               <FaFacebook size={30} className="text-blue-600 hover:text-blue-800" />
             </a>
-            <a
-              href="https://www.instagram.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
               <FaInstagram size={30} className="text-pink-600 hover:text-pink-800" />
             </a>
-            <a
-              href="https://twitter.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <a href="https://twitter.com/" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
               <FaTwitter size={30} className="text-blue-400 hover:text-blue-600" />
             </a>
           </div>
