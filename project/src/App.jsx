@@ -11,23 +11,22 @@ import Login from './pages/LoginForm';
 import SignUpForm from './pages/SignUpForm';
 
 function App() {
-  // Check if the user is logged in from localStorage
-  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-
   return (
     <Router>
       <div className="min-h-screen bg-white">
-        {/* Only render Navbar if user is logged in */}
-        {isLoggedIn && <Navbar />}
+        {/* Always render Navbar */}
+        <Navbar />
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/organizations" element={<Organizations />} />
-          <Route path="/stories" element={<Stories />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/donate" element={<Donate />} />
-          <Route path="/beneficiary-list" element={<ManageBeneficiariesPage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUpForm />} />
+          <Route exact path="/" element={<Home />} />
+          <Route exact path="/organizations" element={<Organizations />} />
+          <Route exact path="/stories" element={<Stories />} />
+          <Route exact path="/about" element={<About />} />
+          <Route exact path="/donate" element={<Donate />} />
+          <Route exact path="/beneficiary-list" element={<ManageBeneficiariesPage />} />
+          <Route exact path="/login" element={<Login />} />
+          <Route exact path="/signup" element={<SignUpForm />} />
+          {/* Fallback Route */}
+          <Route path="*" element={<div>Page Not Found</div>} />
         </Routes>
       </div>
     </Router>
