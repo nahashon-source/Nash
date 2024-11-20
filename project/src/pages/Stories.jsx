@@ -4,7 +4,7 @@ import * as Yup from 'yup';
 import { FaWhatsapp, FaFacebook, FaInstagram, FaTwitter } from 'react-icons/fa';
 import axios from 'axios';
 
-// Stories data (initial state, later modified after form submission)
+// Initial state for stories (including beneficiary and inventory)
 const initialStories = [
   {
     id: 1,
@@ -12,24 +12,21 @@ const initialStories = [
     content: "Through community efforts and sustainable practices, we've helped restore over 1,000 hectares of rainforest...",
     image: "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
     organization: "Rainforest Alliance",
+    beneficiary: "Amazonian Tribe",
+    inventory: "500 tree saplings, 200 water filtration units",
     date: "2024-03-01"
-  },
-  {
+  }, {
     id: 2,
     title: "Marine Life Conservation Success",
-    content: "Our recent initiative has successfully protected endangered sea turtles and their nesting sites...",
+    content:
+      "Our recent initiative has successfully protected endangered sea turtles and their nesting sites...",
     image: "https://images.unsplash.com/photo-1583212292454-1fe6229603b7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
     organization: "Ocean Conservation Initiative",
-    date: "2024-02-28"
+    beneficiary: "Marine ecosystems",
+    inventory: "N/A",
+    date: "2024-02-28",
   },
-  {
-    id: 3,
-    title: "Wildlife Protection Achievement",
-    content: "Thanks to donor support, we've established a new sanctuary for endangered species...",
-    image: "https://images.unsplash.com/photo-1564760055775-d63b17a55c44?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-    organization: "Wildlife Protection Fund",
-    date: "2024-02-25"
-  }
+  
 ];
 
 // Form validation schema with Yup
@@ -38,12 +35,14 @@ const validationSchema = Yup.object({
   title: Yup.string().required('Title is required'),
   content: Yup.string().required('Content is required'),
   image: Yup.string().url('Invalid image URL').optional(),
+  beneficiary: Yup.string().required('Beneficiary name is required'),
+  inventory: Yup.string().required('Inventory details are required'),
 });
 
 export default function Stories() {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [date, setDate] = useState(new Date()); // Automatically updating date
-  const [stories, setStories] = useState(initialStories); // State to store stories
+  const [date, setDate] = useState(new Date());
+  const [stories, setStories] = useState(initialStories);
 
   const formik = useFormik({
     initialValues: {
@@ -51,22 +50,25 @@ export default function Stories() {
       title: '',
       content: '',
       image: '',
+      beneficiary: '',
+      inventory: '',
       date: date.toISOString(),
     },
     validationSchema,
     onSubmit: (values, { resetForm }) => {
-      // Add new story to stories state
       const newStory = {
-        id: stories.length + 1, // New unique ID for the story
+        id: stories.length + 1,
         title: values.title,
         content: values.content,
-        image: values.image || "https://via.placeholder.com/600x400", // Default image if none provided
+        image: values.image || "https://via.placeholder.com/600x400",
         organization: values.organization,
+        beneficiary: values.beneficiary,
+        inventory: values.inventory,
         date: date.toISOString(),
       };
 
-      setStories((prevStories) => [...prevStories, newStory]); // Add the new story to the state
-      resetForm(); // Reset the form after submission
+      setStories((prevStories) => [...prevStories, newStory]);
+      resetForm();
     }
   });
 
@@ -76,15 +78,15 @@ export default function Stories() {
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      setDate(new Date()); // This will trigger a re-render
-    }, 1000); // Update every second
-    return () => clearInterval(intervalId); // Cleanup the interval on unmount
-  }, []); // Empty dependency array to run only once when component mounts
+      setDate(new Date());
+    }, 1000);
+    return () => clearInterval(intervalId);
+  }, []);
 
   useEffect(() => {
-    const intervalId = setInterval(nextStory, 5000); // Change stories every 5 seconds
+    const intervalId = setInterval(nextStory, 5000);
     return () => clearInterval(intervalId);
-  }, [stories.length]); // Add dependency on stories.length to reset the interval if the length changes
+  }, [stories.length]);
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-r from-white-200 via-white-300 to-white-500">
@@ -144,6 +146,40 @@ export default function Stories() {
               ) : null}
             </div>
 
+            {/* Beneficiary */}
+            <div>
+              <label className="block text-lg font-medium text-gray-700">Beneficiary Name</label>
+              <input
+                type="text"
+                name="beneficiary"
+                placeholder="Enter beneficiary name"
+                value={formik.values.beneficiary}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+              />
+              {formik.touched.beneficiary && formik.errors.beneficiary ? (
+                <div className="text-red-500 text-sm">{formik.errors.beneficiary}</div>
+              ) : null}
+            </div>
+
+            {/* Inventory */}
+            <div>
+              <label className="block text-lg font-medium text-gray-700">Inventory Sent</label>
+              <textarea
+                name="inventory"
+                placeholder="Enter inventory sent (e.g., items, quantity)"
+                value={formik.values.inventory}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                rows="4"
+              />
+              {formik.touched.inventory && formik.errors.inventory ? (
+                <div className="text-red-500 text-sm">{formik.errors.inventory}</div>
+              ) : null}
+            </div>
+
             {/* Image URL */}
             <div>
               <label className="block text-lg font-medium text-gray-700">Image URL (Optional)</label>
@@ -169,7 +205,7 @@ export default function Stories() {
 
             {/* Post Story Button */}
             <button
-              type="submit" // Using the default type to submit the form
+              type="submit"
               className="w-full py-3 bg-green-600 text-white font-semibold text-lg rounded-md hover:bg-green-700 transition duration-200"
             >
               Post Story
@@ -201,17 +237,17 @@ export default function Stories() {
                 &#10095;
               </button>
             </div>
-
-            <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black to-transparent py-4 px-6">
-              <h3 className="text-xl font-bold text-white">{stories[currentIndex].title}</h3>
-              <p className="text-sm text-white">{stories[currentIndex].organization} - {stories[currentIndex].date}</p>
-            </div>
           </div>
-        </div>
-      </div>
 
-      {/* Footer Section */}
-      <footer className="bg-white py-6 mt-12 border-t border-gray-200">
+          <div className="mt-8">
+            <h4 className="text-xl font-bold text-green-700 mb-4">{stories[currentIndex].title}</h4>
+            <p className="text-gray-700 mb-4">{stories[currentIndex].content}</p>
+            <p className="text-gray-500 mb-2"><strong>Beneficiary:</strong> {stories[currentIndex].beneficiary}</p>
+            <p className="text-gray-500 mb-2"><strong>Inventory Sent:</strong> {stories[currentIndex].inventory}</p>
+            <p className="text-gray-500 mb-4"><strong>Posted By:</strong> {stories[currentIndex].organization}</p>
+          </div>
+
+          <footer className="bg-white py-6 mt-12 border-t border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-black">
           {/* Dynamic Year Handling */}
           <p className="text-lg">&copy; {new Date().getFullYear()} Mazingira. All rights reserved.</p>
@@ -234,6 +270,8 @@ export default function Stories() {
           </div>
         </div>
       </footer>
+        </div>
+      </div>
     </div>
   );
 }

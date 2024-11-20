@@ -3,15 +3,18 @@ import PropTypes from 'prop-types';
 import { Heart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-function OrganizationCard({ org, onDelete }) {
+function OrganizationCard({ org }) {
   const navigate = useNavigate();
 
   const handleDonateClick = () => {
-    navigate('/donate', { state: { orgId: org.id, orgName: org.name } });
-  };
-
-  const handleDeleteClick = () => {
-    onDelete(org.id); // Call the parent delete function
+    navigate('/donate', {
+      state: {
+        orgId: org.id,
+        orgName: org.name,
+        orgImage: org.image,
+        orgRaised: org.raised,
+      },
+    });
   };
 
   return (
@@ -47,17 +50,6 @@ function OrganizationCard({ org, onDelete }) {
             </p>
           )}
         </div>
-        {org.status === 'Rejected' && (
-          <div className="mt-4">
-            <button
-              onClick={handleDeleteClick}
-              className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700"
-              aria-label={`Delete ${org.name}`}
-            >
-              Delete Organization
-            </button>
-          </div>
-        )}
       </div>
     </div>
   );
@@ -72,7 +64,6 @@ OrganizationCard.propTypes = {
     raised: PropTypes.number.isRequired,
     status: PropTypes.string.isRequired,
   }).isRequired,
-  onDelete: PropTypes.func.isRequired, // Function to handle deletion
 };
 
 export default OrganizationCard;

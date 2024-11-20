@@ -32,10 +32,11 @@ export default function SignUpForm() {
       className="flex items-center justify-center min-h-screen bg-cover bg-center"
       style={{
         backgroundImage:
-          "url('https://images.unsplash.com/photo-1497250681960-ef046c08a56e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80')",
+          "url('https://images.unsplash.com/photo-1503435980610-a51f3ddfee50?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8Zm9yZXN0fGVufDB8fDB8fHww')",
       }}
     >
-      <div className="w-full max-w-md p-8 space-y-6 bg-white bg-opacity-90 rounded shadow-md">
+      {/* Form Container with Increased Transparency */}
+      <div className="w-full max-w-md p-8 space-y-6 bg-white bg-opacity-10 rounded shadow-md">
         <h2 className="text-2xl font-bold text-center text-green-800">Sign Up</h2>
         {error && <div className="text-sm text-red-600 text-center">{error}</div>}
         <form className="space-y-4" onSubmit={handleSubmit}>

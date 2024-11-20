@@ -41,12 +41,6 @@ export default function Navbar() {
               <Link to="/stories" className="text-green-800 hover:text-green-600 px-3 py-2 rounded-md font-medium">
                 Stories
               </Link>
-              <Link
-                to="/beneficiary-list"
-                className="text-green-800 hover:text-green-600 px-3 py-2 rounded-md font-medium"
-              >
-                Beneficiaries
-              </Link>
               <Link to="/about" className="text-green-800 hover:text-green-600 px-3 py-2 rounded-md font-medium">
                 About
               </Link>

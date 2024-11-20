@@ -6,7 +6,6 @@ import Organizations from './pages/Organizations';
 import Stories from './pages/Stories';
 import About from './pages/About';
 import Donate from './pages/Donate';
-import ManageBeneficiariesPage from './pages/ManageBeneficiariesPage';
 import Login from './pages/LoginForm';
 import SignUpForm from './pages/SignUpForm';
 
@@ -22,7 +21,6 @@ function App() {
           <Route exact path="/stories" element={<Stories />} />
           <Route exact path="/about" element={<About />} />
           <Route exact path="/donate" element={<Donate />} />
-          <Route exact path="/beneficiary-list" element={<ManageBeneficiariesPage />} />
           <Route exact path="/login" element={<Login />} />
           <Route exact path="/signup" element={<SignUpForm />} />
           {/* Fallback Route */}
