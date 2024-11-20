@@ -20,7 +20,7 @@ export const createDonation = async (data, token) => {
     });
     return response.data;
   } catch (error) {
-    console.error('Error creating donation:', error);
+    console.error('Error creating donation:', error.response ? error.response.data : error.message);
     throw error;
   }
 };
@@ -35,7 +35,7 @@ export const getDonations = async (token) => {
     });
     return response.data;
   } catch (error) {
-    console.error('Error fetching donations:', error);
+    console.error('Error fetching donations:', error.response ? error.response.data : error.message);
     throw error;
   }
 };

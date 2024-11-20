@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FaWhatsapp, FaFacebook, FaInstagram, FaTwitter } from 'react-icons/fa';
@@ -14,39 +13,47 @@ const ManageBeneficiariesPage = () => {
   const [inventory, setInventory] = useState([]);
   const [error, setError] = useState(null);
 
+  // Axios instance for API calls
+  const api = axios.create({
+    baseURL: 'https://project-backend-1-z8k0.onrender.com',  // Backend URL
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
   // Fetch beneficiaries and inventory data
   const fetchBeneficiaries = async () => {
     try {
-      const response = await axios.get('/api/beneficiaries');
+      const response = await api.get('/api/beneficiaries');
       console.log('Fetched beneficiaries:', response.data);
 
       if (Array.isArray(response.data)) {
         setBeneficiaries(response.data);
-        setError(null); // Clear any errors
+        setError(null); // Clear any previous errors
       } else {
         console.error('Expected array but got:', response.data);
         setError('Failed to fetch beneficiaries');
       }
     } catch (error) {
-      console.error('Error fetching beneficiaries:', error);
+      console.error('Error fetching beneficiaries:', error.response ? error.response.data : error.message);
       setError('Failed to fetch beneficiaries');
     }
   };
 
   const fetchInventory = async () => {
     try {
-      const response = await axios.get('/api/inventory');
+      const response = await api.get('/api/inventory');
       console.log('Fetched inventory:', response.data);
 
       if (Array.isArray(response.data)) {
         setInventory(response.data);
-        setError(null); // Clear any errors
+        setError(null); // Clear any previous errors
       } else {
         console.error('Expected array but got:', response.data);
         setError('Failed to fetch inventory');
       }
     } catch (error) {
-      console.error('Error fetching inventory:', error);
+      console.error('Error fetching inventory:', error.response ? error.response.data : error.message);
       setError('Failed to fetch inventory');
     }
   };
@@ -59,16 +66,16 @@ const ManageBeneficiariesPage = () => {
   const handleBeneficiarySubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('/api/beneficiaries', {
+      await api.post('/api/beneficiaries', {
         name: beneficiaryName,
         description,
       });
       setStatus('Beneficiary added successfully!');
       setBeneficiaryName('');
       setDescription('');
-      fetchBeneficiaries(); // Refresh beneficiaries list from the database
+      fetchBeneficiaries(); // Refresh beneficiaries list
     } catch (error) {
-      console.error('Error adding beneficiary:', error);
+      console.error('Error adding beneficiary:', error.response ? error.response.data : error.message);
       setStatus('Error adding beneficiary');
     }
   };
@@ -76,7 +83,7 @@ const ManageBeneficiariesPage = () => {
   const handleInventorySubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('/api/inventory', {
+      await api.post('/api/inventory', {
         item_name: itemName,
         quantity,
         date_sent: dateSent,
@@ -85,9 +92,9 @@ const ManageBeneficiariesPage = () => {
       setItemName('');
       setQuantity('');
       setDateSent('');
-      fetchInventory(); // Refresh inventory list from the database
+      fetchInventory(); // Refresh inventory list
     } catch (error) {
-      console.error('Error adding inventory item:', error);
+      console.error('Error adding inventory item:', error.response ? error.response.data : error.message);
       setStatus('Error adding inventory item');
     }
   };
@@ -173,20 +180,19 @@ const ManageBeneficiariesPage = () => {
       <footer className="bg-white py-8 mt-12 border-t border-gray-200 w-full">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-black">
           <p className="text-lg">&copy; 2024 EcoGuard. All rights reserved.</p>
-          <p className="mt-2 text-sm">Your support helps protect the planet for future generations.</p>
-
-          <div className="flex justify-center mt-4 space-x-6">
-            <a href="https://wa.me/" target="_blank" rel="noopener noreferrer">
-              <FaWhatsapp size={30} className="text-green-600 hover:text-green-800" />
+          <p className="mt-2 text-sm">Your support helps protect the planet!</p>
+          <div className="flex justify-center mt-4">
+            <a href="#" className="mx-4 text-green-600">
+              <FaWhatsapp size={30} />
             </a>
-            <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer">
-              <FaFacebook size={30} className="text-blue-600 hover:text-blue-800" />
+            <a href="#" className="mx-4 text-blue-600">
+              <FaFacebook size={30} />
             </a>
-            <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer">
-              <FaInstagram size={30} className="text-pink-600 hover:text-pink-800" />
+            <a href="#" className="mx-4 text-pink-600">
+              <FaInstagram size={30} />
             </a>
-            <a href="https://twitter.com/" target="_blank" rel="noopener noreferrer">
-              <FaTwitter size={30} className="text-blue-400 hover:text-blue-600" />
+            <a href="#" className="mx-4 text-blue-400">
+              <FaTwitter size={30} />
             </a>
           </div>
         </div>
