@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FaWhatsapp, FaFacebook, FaInstagram, FaTwitter } from 'react-icons/fa';
@@ -11,7 +12,7 @@ const ManageBeneficiariesPage = () => {
   const [status, setStatus] = useState('');
   const [beneficiaries, setBeneficiaries] = useState([]);
   const [inventory, setInventory] = useState([]);
-  const [error, setError] = useState(null); // Track errors
+  const [error, setError] = useState(null);
 
   // Fetch beneficiaries and inventory data
   const fetchBeneficiaries = async () => {
@@ -190,7 +191,6 @@ const ManageBeneficiariesPage = () => {
           </div>
         </div>
       </footer>
-
     </div>
   );
 };

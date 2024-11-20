@@ -1,41 +1,70 @@
 import React, { useState } from 'react';
-import { CreditCard, Calendar, DollarSign, Heart } from 'lucide-react';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import { DollarSign, Heart } from 'lucide-react';
 import { FaFacebook, FaInstagram, FaTwitter, FaWhatsapp } from 'react-icons/fa';
 
+// Currency symbols mapping
+const currencySymbols = {
+  Ksh: 'KSh',
+  USD: '$',
+  EUR: '€',
+  GBP: '£',
+};
+
+// Validation schema
+const validationSchema = Yup.object({
+  donationAmount: Yup.number()
+    .min(1, 'Donation must be at least 1')
+    .required('Donation amount is required'),
+  currency: Yup.string().required('Currency is required'),
+  paymentMethod: Yup.string().required('Payment method is required'),
+});
+
+// Main Donate Component
 export default function Donate() {
-  const [donationAmount, setDonationAmount] = useState('');
-  const [isRecurring, setIsRecurring] = useState(false);
-  const [frequency, setFrequency] = useState('monthly');
-  const [isAnonymous, setIsAnonymous] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState('');
-  const [currency, setCurrency] = useState('Ksh');
+  const [loading, setLoading] = useState(false); // Loading state for form submission
+  const [error, setError] = useState(null); // Error state to handle API errors
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log({
-      amount: donationAmount,
-      currency,
-      isRecurring,
-      frequency: isRecurring ? frequency : null,
-      isAnonymous,
-      paymentMethod,
-    });
-  };
+  const formik = useFormik({
+    initialValues: {
+      donationAmount: '',
+      currency: 'Ksh',
+      isRecurring: false,
+      frequency: 'monthly',
+      isAnonymous: false,
+      paymentMethod: '',
+    },
+    validationSchema,
+    onSubmit: async (values) => {
+      setLoading(true);
+      setError(null); // Reset error on form submission
 
-  const currencySymbols = {
-    Ksh: 'KSh',
-    USD: '$',
-    EUR: '€',
-    GBP: '£',
-  };
+      try {
+        const response = await fetch('https://project-backend-1-z8k0.onrender.com/donate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(values),
+        });
 
-  const getCurrencySymbol = (currencyCode) => {
-    return currencySymbols[currencyCode] || currencyCode;
-  };
+        if (!response.ok) {
+          const errorData = await response.json(); // Capture the error response from the server
+          throw new Error(errorData.message || 'Server responded with an error');
+        }
 
-  const handleFrequencyClick = (newFrequency) => {
-    setFrequency(newFrequency);
-  };
+        const result = await response.json();
+        alert(result.message); // Alert the success message from the backend
+        formik.resetForm(); // Reset form after successful donation
+      } catch (error) {
+        console.error('Error processing donation:', error);
+        setError(error.message || 'An error occurred while processing your donation. Please try again later.');
+      } finally {
+        setLoading(false); // Reset loading state after API call
+      }
+    },
+  });
 
   return (
     <div className="pt-16 bg-gray-50">
@@ -51,22 +80,28 @@ export default function Donate() {
       {/* Form Section */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="bg-white rounded-lg shadow-xl p-8">
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={formik.handleSubmit}>
             {/* Donation Amount */}
             <div className="mb-6">
-              <label className="block text-gray-700 text-sm font-semibold mb-2">Donation Amount</label>
+              <label className="block text-gray-700 text-sm font-semibold mb-2">
+                Donation Amount
+              </label>
               <div className="relative">
                 <span className="absolute left-3 top-2 text-gray-400">
-                  {getCurrencySymbol(currency)}
+                  {currencySymbols[formik.values.currency]}
                 </span>
                 <input
+                  name="donationAmount"
                   type="number"
-                  value={donationAmount}
-                  onChange={(e) => setDonationAmount(e.target.value)}
+                  value={formik.values.donationAmount}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                   className="w-full pl-12 pr-4 py-3 border rounded-lg focus:outline-none focus:border-green-500"
                   placeholder="Enter amount"
-                  required
                 />
+                {formik.touched.donationAmount && formik.errors.donationAmount && (
+                  <p className="text-red-500">{formik.errors.donationAmount}</p>
+                )}
               </div>
             </div>
 
@@ -74,8 +109,10 @@ export default function Donate() {
             <div className="mb-6">
               <label className="block text-gray-700 text-sm font-semibold mb-2">Currency</label>
               <select
-                value={currency}
-                onChange={(e) => setCurrency(e.target.value)}
+                name="currency"
+                value={formik.values.currency}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
                 className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-green-500"
               >
                 <option value="Ksh">Kenyan Shilling (Ksh)</option>
@@ -89,45 +126,35 @@ export default function Donate() {
             <div className="mb-6">
               <div className="flex items-center mb-4">
                 <input
+                  name="isRecurring"
                   type="checkbox"
-                  id="recurring"
-                  checked={isRecurring}
-                  onChange={(e) => setIsRecurring(e.target.checked)}
+                  checked={formik.values.isRecurring}
+                  onChange={formik.handleChange}
                   className="h-5 w-5 text-green-600 focus:ring-green-500 border-gray-300 rounded"
                 />
-                <label htmlFor="recurring" className="ml-2 text-sm text-gray-900">
+                <label className="ml-2 text-sm text-gray-900">
                   Make this a recurring donation
                 </label>
               </div>
 
-              {isRecurring && (
+              {formik.values.isRecurring && (
                 <div className="ml-6">
                   <label className="block text-gray-700 text-sm font-semibold mb-2">Frequency</label>
-                  <div className="flex justify-center space-x-4">
-                    <button
-                      type="button"
-                      className={`px-4 py-2 rounded-lg font-medium transition duration-200 ${frequency === 'monthly' ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-700'
+                  <div className="flex space-x-4">
+                    {['monthly', 'quarterly', 'yearly'].map((freq) => (
+                      <button
+                        key={freq}
+                        type="button"
+                        className={`px-4 py-2 rounded-lg font-medium transition duration-200 ${
+                          formik.values.frequency === freq
+                            ? 'bg-green-600 text-white'
+                            : 'bg-gray-200 text-gray-700'
                         }`}
-                      onClick={() => setFrequency('monthly')}
-                    >
-                      Monthly
-                    </button>
-                    <button
-                      type="button"
-                      className={`px-4 py-2 rounded-lg font-medium transition duration-200 ${frequency === 'quarterly' ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-700'
-                        }`}
-                      onClick={() => setFrequency('quarterly')}
-                    >
-                      Quarterly
-                    </button>
-                    <button
-                      type="button"
-                      className={`px-4 py-2 rounded-lg font-medium transition duration-200 ${frequency === 'yearly' ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-700'
-                        }`}
-                      onClick={() => setFrequency('yearly')}
-                    >
-                      Yearly
-                    </button>
+                        onClick={() => formik.setFieldValue('frequency', freq)}
+                      >
+                        {freq.charAt(0).toUpperCase() + freq.slice(1)}
+                      </button>
+                    ))}
                   </div>
                 </div>
               )}
@@ -137,97 +164,48 @@ export default function Donate() {
             <div className="mb-6">
               <div className="flex items-center">
                 <input
+                  name="isAnonymous"
                   type="checkbox"
-                  id="anonymous"
-                  checked={isAnonymous}
-                  onChange={(e) => setIsAnonymous(e.target.checked)}
+                  checked={formik.values.isAnonymous}
+                  onChange={formik.handleChange}
                   className="h-5 w-5 text-green-600 focus:ring-green-500 border-gray-300 rounded"
                 />
-                <label htmlFor="anonymous" className="ml-2 text-sm text-gray-900">
-                  Make this an anonymous donation
-                </label>
+                <label className="ml-2 text-sm text-gray-900">Make this an anonymous donation</label>
               </div>
             </div>
 
             {/* Payment Information */}
-<div className="mb-6">
-  <label htmlFor="paymentMethod" className="block text-sm font-semibold text-gray-700">Payment Method</label>
-  <select
-    id="paymentMethod"
-    value={paymentMethod}
-    onChange={(e) => setPaymentMethod(e.target.value)}
-    className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-green-500 focus:border-green-500"
-  >
-    <option value="">Select Payment Method</option>
-    <option value="creditCard">Credit Card</option>
-    <option value="debitCard">Debit Card</option>
-    <option value="mpesa">MPESA</option>
-    <option value="paypal">PayPal</option>
-  </select>
-</div>
+            <div className="mb-6">
+              <label className="block text-sm font-semibold text-gray-700">Payment Method</label>
+              <select
+                name="paymentMethod"
+                value={formik.values.paymentMethod}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-green-500 focus:border-green-500"
+              >
+                <option value="">Select Payment Method</option>
+                <option value="creditCard">Credit Card</option>
+                <option value="mpesa">MPESA</option>
+                <option value="paypal">PayPal</option>
+              </select>
+              {formik.touched.paymentMethod && formik.errors.paymentMethod && (
+                <p className="text-red-500 text-sm">{formik.errors.paymentMethod}</p>
+              )}
+            </div>
 
-{/* Payment Form Based on Selected Method */}
-{paymentMethod === 'creditCard' || paymentMethod === 'debitCard' ? (
-  <div className="mb-6">
-    <label className="block text-gray-700 text-sm font-semibold mb-2">Card Information</label>
-    <div className="mb-4">
-      <input
-        type="text"
-        placeholder="Card Number"
-        className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-green-500"
-        required
-      />
-    </div>
-    <div className="flex space-x-4">
-      <div className="w-1/2">
-        <input
-          type="text"
-          placeholder="Expiry Date (MM/YY)"
-          className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-green-500"
-          required
-        />
-      </div>
-      <div className="w-1/2">
-        <input
-          type="text"
-          placeholder="CVV"
-          className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-green-500"
-          required
-        />
-      </div>
-    </div>
-  </div>
-) : paymentMethod === 'mpesa' ? (
-  <div className="mb-6">
-    <label className="block text-gray-700 text-sm font-semibold mb-2">MPESA Phone Number</label>
-    <input
-      type="text"
-      placeholder="Enter your MPESA phone number"
-      className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-green-500"
-      required
-    />
-  </div>
-) : paymentMethod === 'paypal' ? (
-  <div className="mb-6">
-    <label className="block text-gray-700 text-sm font-semibold mb-2">PayPal Email</label>
-    <input
-      type="email"
-      placeholder="Enter your PayPal email"
-      className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-green-500"
-      required
-    />
-  </div>
-) : null}
             {/* Donation Summary */}
             <div className="mt-8 border-t pt-4">
               <div className="flex justify-between mb-2">
                 <span>Frequency</span>
-                <span className="capitalize">{frequency}</span>
+                <span className="capitalize">
+                  {formik.values.isRecurring ? formik.values.frequency : 'One-time'}
+                </span>
               </div>
               <div className="flex justify-between font-semibold">
                 <span>Total</span>
                 <span>
-                  {getCurrencySymbol(currency)} {donationAmount} / {frequency === 'monthly' ? 'month' : frequency}
+                  {currencySymbols[formik.values.currency]} {formik.values.donationAmount}
                 </span>
               </div>
             </div>
@@ -236,32 +214,36 @@ export default function Donate() {
             <button
               type="submit"
               className="w-full bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 flex items-center justify-center gap-2 mt-6"
+              disabled={loading} // Disable button while loading
             >
-              <Heart size={20} />
-              Complete Donation
+              {loading ? (
+                <span>Processing...</span>
+              ) : (
+                <>
+                  <Heart size={20} />
+                  Complete Donation
+                </>
+              )}
             </button>
           </form>
+
+          {/* Error Message */}
+          {error && (
+            <div className="text-red-500 text-center mt-4">
+              <p>{error}</p>
+            </div>
+          )}
         </div>
       </div>
-      <footer className="bg-white py-6 mt-12 border-t border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-black">
-          <p className="text-lg">&copy; 2024 Mazingira. All rights reserved.</p>
-          <p className="mt-2 text-sm">Your support helps protect the planet for future generations.</p>
 
-          <div className="flex justify-center mt-4 space-x-6">
-            {/* Social Media Icons */}
-            <a href="https://wa.me/" target="_blank" rel="noopener noreferrer">
-              <FaWhatsapp size={30} className="text-green-600 hover:text-green-800" />
-            </a>
-            <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer">
-              <FaFacebook size={30} className="text-blue-600 hover:text-blue-800" />
-            </a>
-            <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer">
-              <FaInstagram size={30} className="text-pink-600 hover:text-pink-800" />
-            </a>
-            <a href="https://twitter.com/" target="_blank" rel="noopener noreferrer">
-              <FaTwitter size={30} className="text-blue-400 hover:text-blue-600" />
-            </a>
+      {/* Footer */}
+      <footer className="bg-white py-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="flex justify-center space-x-6">
+            <a href="#" className="text-gray-600 hover:text-gray-800"><FaFacebook /></a>
+            <a href="#" className="text-gray-600 hover:text-gray-800"><FaInstagram /></a>
+            <a href="#" className="text-gray-600 hover:text-gray-800"><FaTwitter /></a>
+            <a href="#" className="text-gray-600 hover:text-gray-800"><FaWhatsapp /></a>
           </div>
         </div>
       </footer>
